@@ -28,8 +28,8 @@ function start() {
       name: "userInput",
       type: "list",
       message:
-        "Would you like to view [VIEW DEPARTMENTS], [VIEW ROLES], [VIEW EMPLOYEES], [ADD DEPARTMENTS], [ADD ROLES], [ADD EMPLOYEES], [UPDATE EMPLOYEE ROLE] [EXIT]?",
-      choices: ["VIEW_DEPARTMENTS", "VIEW_ROLES", "VIEW_EMPLOYEES", "ADD_DEPARTMENTS", "ADD_ROLES", "ADD_EMPLOYEES", "UPDATE_EMPLOYEE_ROLE", "EXIT"],
+        "Would you like to view [VIEW DEPARTMENTS], [VIEW ROLES], [VIEW EMPLOYEES], [ADD DEPARTMENTS], [ADD ROLES], [ADD EMPLOYEES], [UPDATE EMPLOYEE ROLE], [REMOVE DEPARTMENT], [EXIT]?",
+      choices: ["VIEW_DEPARTMENTS", "VIEW_ROLES", "VIEW_EMPLOYEES", "ADD_DEPARTMENTS", "ADD_ROLES", "ADD_EMPLOYEES", "UPDATE_EMPLOYEE_ROLE", "REMOVE_DEPARTMENT", "EXIT"],
     })
     .then(function (answer) {
       // based on their answer, either call the bid or the post functions
@@ -47,7 +47,9 @@ function start() {
         addEmployee();
       } else if (answer.userInput === "UPDATE_EMPLOYEE_ROLE") {
         update_Employee();
-      }else {
+      } else if (answer.userInput === "REMOVE_DEPARTMENT") {
+        remove_Department();
+      } else {
         connection.end();
       }
     });
@@ -184,7 +186,7 @@ function update_Employee() {
                 {
                     type: "list",
                     name: "employee_id",
-                    message: "Which employee would you like to udate?",
+                    message: "Which employee would you like to update?",
                     choices:employeeChoices 
                 },
                 {
@@ -202,3 +204,18 @@ function update_Employee() {
     })
 
 }
+
+async function remove_Department () {
+
+  const department = await inquirer.prompt([
+      {
+          name: "name",
+          message: "What is the name of the department you wish to remove?"
+      }
+  ])
+// tried, couldnt find the syntax to parse the name
+  const departmentPrse = JSON.parse(department.name);
+
+  connection.query (`delete from department where values ('${departmentPrse}')`, printResults )
+}
+
